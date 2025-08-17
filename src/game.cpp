@@ -5,26 +5,30 @@ class IsometricGame : public CGame {
     IsometricGame() {}
     ~IsometricGame() {}
 
-    CGame& onCreate() {
+    IsometricGame& onCreate() {
       engine.props
         .setTitle("Isometric Engine V0.0.1a")
         .setScreenWidth(512)
         .setScreenHeight(512)
-        .setScreenColor(0xFFFFFF);
+        .setScreenColor(0xFFFFFF)
+        .setCurrentGame(
+            std::make_shared<IsometricGame>(*this)
+        );
       return *this;
     }
 
-    CGame& onInitialize() {
+    IsometricGame& onInitialize() {
 
       return *this;
     }
 
-    CGame& loop() {
-
+    IsometricGame& loop() {
+      static int iterationCounter = 0;
+      std::cout << ++iterationCounter << "\n";
       return *this;
     }
 
-    CGame& onRelease() {
+    IsometricGame& onRelease() {
 
       return *this;
     }
@@ -33,7 +37,7 @@ class IsometricGame : public CGame {
 /**
  * Game Factory used in app initialization.
  */
-CGame game_factory() { return IsometricGame(); }
+IsometricGame game_factory() { return IsometricGame(); }
 
 int main( int argc, char** argv ) {
   try {
