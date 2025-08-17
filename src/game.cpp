@@ -19,7 +19,7 @@ class IsometricGame : public CGame {
       return *this;
     }
 
-    CGame& gameLoop() {
+    CGame& loop() {
 
       return *this;
     }

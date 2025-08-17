@@ -28,6 +28,7 @@ class CGame {
         .setCurrentGame(
             std::make_shared<CGame>(*this)
         );
+      engine.onInitialize();
       return *this; 
     }
 
@@ -47,7 +48,7 @@ class CGame {
     virtual CGame& onRelease() { return *this; }
 
     // game logic loop
-    virtual CGame& gameLoop() { return *this; }
+    virtual CGame& loop() { return *this; }
 
   protected:
     EngineInstance engine;

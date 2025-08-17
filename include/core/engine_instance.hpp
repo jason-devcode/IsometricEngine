@@ -63,19 +63,34 @@ class EngineProps {
     std::shared_ptr<CGame> m_currentGame = nullptr;
 };
 
-
 class EngineInstance {
   public:
     EngineInstance() {
       props = EngineProps();
     }
     
-    bool start() {
+    // 
+    EngineInstance& onInitialize() {
 
-      return true;
     }
+    
+    // En este punto todas las propiedades del motor ya debieron haber sido
+    // inicializadas
+    EngineInstance& start() {
 
+      return *this;
+    }
+    
     EngineProps props;
 };
+
+
+
+
+
+
+
+
+
 
 #endif // CORE_ENGINE_INSTANCE_HPP
