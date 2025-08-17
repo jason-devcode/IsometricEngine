@@ -7,10 +7,15 @@
 /** for std::uint32_t */
 #include <cstdint>
 
+
+/** for IGame */
+#include "./igame.hpp"
+
+
 /** forward declaration of EngineInstance */
 class EngineInstance;
 
-class CGame {
+class CGame : public IGame {
   public:
     CGame() {}
     ~CGame() {}
@@ -24,10 +29,7 @@ class CGame {
         .setScreenHeight(256)
         .setScreenColor(0xFF000000)
         .setVSyncEnable(true)
-        .setVSyncLimit(60)
-        .setCurrentGame(
-            std::make_shared<CGame>(*this)
-        );
+        .setVSyncLimit(60);
       engine.onInitialize();
       return *this; 
     }
@@ -48,6 +50,7 @@ class CGame {
     virtual CGame& onRelease() { return *this; }
 
     // game logic loop
+  //virtual IGame& loop() {};
     virtual CGame& loop() { return *this; }
 
   protected:
