@@ -29,9 +29,9 @@
 
 
 /** utility to initialize SDL Video System */
-#ifndef INITIALIZE_SDL_VIDEO_SYS()\
+#define INITIALIZE_SDL_VIDEO_SYS()\
   if( !SDL_Init( SDL_INIT_VIDEO ) < 0 ) {\
-    std::cerr << "ERROR (SDL Init): " << SDL_GetError() << "\n";
+    std::cerr << "ERROR (SDL Init): " << SDL_GetError() << "\n";\
     throw ERROR_VIDEO_INIT_SYSTEM;\
   }
 
@@ -46,11 +46,11 @@ class EngineWindow {
 
     }
 
-    EngineWindow& setTitle( std::string title ) { m_title = title; }
+    EngineWindow& setTitle( std::string title ) { m_title = title; return *this; }
 
-    EngineWindow& setWidth( std::uint32_t width ) { m_width = width; }
+    EngineWindow& setWidth( std::uint32_t width ) { m_width = width; return *this; }
 
-    EngineWindow& setHeight( std::uint32_t height ) { m_height = height; }
+    EngineWindow& setHeight( std::uint32_t height ) { m_height = height; return *this; }
     
     // 1.stage initialize SDL Window system
     EngineWindow& initalize() {
@@ -80,7 +80,7 @@ class EngineWindow {
 
       // if theres some error while get window surface
       if( surface == nullptr ) {
-        std::cerr "EngineWindow::create() - Getting Window Surface Error: " << SDL_GetError() << "\n";
+        std::cerr << "EngineWindow::create() - Getting Window Surface Error: " << SDL_GetError() << "\n";
         throw ERROR_WINDOW_GET_SURFACE;
       }
 
@@ -93,6 +93,8 @@ class EngineWindow {
       // store in object state
       m_window = window;
       m_surface = surface;
+
+      return *this;
     }
   
     SDL_Window *m_window = nullptr;

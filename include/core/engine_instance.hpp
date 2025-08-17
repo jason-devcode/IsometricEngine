@@ -10,6 +10,13 @@
 /** for std::string */
 #include <string>
 
+/** for SDL Event utils */
+#include <SDL2/SDL.h>
+
+/** for EngineWindow */
+#include "./engine_window.hpp"
+
+
 /** forward declaration of CGame */
 class CGame;
 
@@ -50,7 +57,7 @@ class EngineProps {
       m_currentGame = std::move(game);
       return *this;
     }
-  private:
+
     std::string m_title = "Default App";
     
     std::uint32_t m_screenWidth_px = 256;
@@ -67,29 +74,39 @@ class EngineInstance {
   public:
     EngineInstance() {
       props = EngineProps();
+      window = EngineWindow();
     }
     
     // 
     EngineInstance& onInitialize() {
-
+      
+      return *this;
     }
     
     // En este punto todas las propiedades del motor ya debieron haber sido
     // inicializadas
     EngineInstance& start() {
+      window
+        .setTitle( props.m_title )
+        .setWidth( props.m_screenWidth_px )
+        .setHeight( props.m_screenHeight_px )
+        .create();
 
+      SDL_Event event;
+      bool quit = false;
+
+      while( !quit ) {
+        // process all events
+        while( SDL_PollEvent(&event) ) {
+          if( event.type == SDL_QUIT ) quit = true;
+        }
+      }
       return *this;
     }
-    
+
+    EngineWindow window;
     EngineProps props;
 };
-
-
-
-
-
-
-
 
 
 
