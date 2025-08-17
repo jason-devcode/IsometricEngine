@@ -16,9 +16,8 @@
 /** for EngineWindow */
 #include "./engine_window.hpp"
 
-
-/** forward declaration of CGame */
-class CGame;
+/** for IGame */
+#include "../api/igame.hpp"
 
 class EngineProps {
   public:
@@ -53,7 +52,7 @@ class EngineProps {
       return *this;
     }
 
-    EngineProps& setCurrentGame( std::shared_ptr<CGame> game ) {
+    EngineProps& setCurrentGame( std::shared_ptr<IGame> game ) {
       m_currentGame = std::move(game);
       return *this;
     }
@@ -67,7 +66,7 @@ class EngineProps {
     std::uint32_t m_vsyncLimit = 30;
     bool m_vsyncEnable = true;
     
-    std::shared_ptr<CGame> m_currentGame = nullptr;
+    std::shared_ptr<IGame> m_currentGame = nullptr;
 };
 
 class EngineInstance {
@@ -100,6 +99,8 @@ class EngineInstance {
         while( SDL_PollEvent(&event) ) {
           if( event.type == SDL_QUIT ) quit = true;
         }
+
+        if( props.m_currentGame ) props.m_currentGame->loop();
       }
       return *this;
     }
