@@ -35,7 +35,7 @@ class IsometricGame : public CGame {
  */
 CGame game_factory() { return IsometricGame(); }
 
-int main() {
+int main( int argc, char** argv ) {
   try {
     game_factory()
       .buildEngineInstance()
@@ -44,6 +44,10 @@ int main() {
       .onStart();
 
     return 0;
+  }
+  catch ( int errorCode ) {
+    std::cerr << "ERROR: Code " << errorCode << "\n";
+    return -1;
   }
   catch (const std::exception& error) {
     return -1;
