@@ -45,6 +45,7 @@ int main( int argc, char** argv ) {
       .buildEngineInstance()
       .onCreate()
       .onInitialize()
+      .onCreateWindow()
       .onStart();
 
     return 0;

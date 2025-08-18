@@ -30,8 +30,14 @@ class CGame : public IGame {
         .setScreenColor(0xFF000000)
         .setVSyncEnable(true)
         .setVSyncLimit(60);
-      engine.onInitialize();
-      return *this; 
+            return *this; 
+    }
+
+    CGame& onCreateWindow() { 
+      engine
+        .onInitialize()
+        .onCreate();
+      return *this;
     }
 
     // 2. stage to set game instance custom props

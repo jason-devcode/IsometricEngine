@@ -19,6 +19,9 @@
 /** for IGame */
 #include "../api/igame.hpp"
 
+/** for graphics */
+#include "./graphics.hpp"
+
 class EngineProps {
   public:
     EngineProps() {}
@@ -74,23 +77,39 @@ class EngineInstance {
     EngineInstance() {
       props = EngineProps();
       window = EngineWindow();
+      graphics = Graphics();
     }
     
-    // 
+    // stage 1 - create engine instance resources
+    EngineInstance& onCreate() {
+      window
+        .setTitle( props.m_title )
+        .setWidth( props.m_screenWidth_px )
+        .setHeight( props.m_screenHeight_px )
+        .setClearColor( props.m_screenColor )
+        .create();
+      return *this;
+    }
+
+
+    // stage 2 - initialize game engine resources
     EngineInstance& onInitialize() {
-      
+      if( 
+          window.m_window != nullptr && 
+          window.m_surface != nullptr 
+      ) {
+        graphics.setPixels( 
+            static_cast<std::uint32_t*>(window.m_surface->pixels)
+        );
+        graphics.setWidth( window.m_surface->pitch / 4 );
+        graphics.setHeight( props.m_screenWidth_px );
+      }
       return *this;
     }
     
     // En este punto todas las propiedades del motor ya debieron haber sido
     // inicializadas
     EngineInstance& start() {
-      window
-        .setTitle( props.m_title )
-        .setWidth( props.m_screenWidth_px )
-        .setHeight( props.m_screenHeight_px )
-        .create();
-
       SDL_Event event;
       bool quit = false;
 
@@ -99,14 +118,20 @@ class EngineInstance {
         while( SDL_PollEvent(&event) ) {
           if( event.type == SDL_QUIT ) quit = true;
         }
+        
+        window.clear();
 
-        if( props.m_currentGame ) props.m_currentGame->loop();
+        if( props.m_currentGame )
+          props.m_currentGame->loop();
+
+        window.render();
       }
       return *this;
     }
 
     EngineWindow window;
     EngineProps props;
+    Graphics graphics;
 };
 
 

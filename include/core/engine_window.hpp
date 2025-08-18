@@ -51,7 +51,9 @@ class EngineWindow {
     EngineWindow& setWidth( std::uint32_t width ) { m_width = width; return *this; }
 
     EngineWindow& setHeight( std::uint32_t height ) { m_height = height; return *this; }
-    
+
+    EngineWindow& setClearColor( std::uint32_t color ) { m_clearColor = color; return *this; }
+
     // 1.stage initialize SDL Window system
     EngineWindow& initalize() {
       INITIALIZE_SDL_VIDEO_SYS();
@@ -85,7 +87,7 @@ class EngineWindow {
       }
 
       // 3. fill window screen surface with white rect
-      SDL_FillRect( surface, NULL, SDL_MapRGB( surface->format, 0xFF, 0xFF, 0xFF ) );
+      SDL_FillRect( surface, NULL, m_clearColor );
 
       // 4. Update window surface
       SDL_UpdateWindowSurface( window );
@@ -96,13 +98,22 @@ class EngineWindow {
 
       return *this;
     }
+    
+    void clear() {
+      SDL_FillRect( m_surface, NULL, m_clearColor );
+    }
+
+    void render() {
+      SDL_UpdateWindowSurface( m_window );
+    }
   
     SDL_Window *m_window = nullptr;
     SDL_Surface* m_surface = nullptr;
 
-    std::string m_title; // window title
-    std::uint32_t m_width; // screen width in pixels
-    std::uint32_t m_height; // screen height in pixels
+    std::string m_title;        // window title
+    std::uint32_t m_width;      // screen width in pixels
+    std::uint32_t m_height;     // screen height in pixels
+    std::uint32_t m_clearColor; // screen clear color
 };
 
 
