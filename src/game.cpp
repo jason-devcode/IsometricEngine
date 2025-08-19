@@ -10,21 +10,22 @@ class IsometricGame : public CGame {
         .setTitle("Isometric Engine V0.0.1a")
         .setScreenWidth(512)
         .setScreenHeight(512)
-        .setScreenColor(0xFFFFFF)
-        .setCurrentGame(
-            std::make_shared<IsometricGame>(*this)
-        );
+        .setScreenColor(0xFF000000)
+        .setCurrentGame(this);
       return *this;
     }
 
     IsometricGame& onInitialize() {
-
+      //std::cout << engine.graphics.pixels << std::endl ;
       return *this;
     }
 
     IsometricGame& loop() {
-      static int iterationCounter = 0;
-      std::cout << ++iterationCounter << "\n";
+      for( int Y = 0; Y < 256; Y++ ) {
+        for( int X = 0; X < 256; X++ ) {
+          engine.graphics.putPixel(X, Y, 0xFF0000FF);
+        }
+      }
       return *this;
     }
 
@@ -44,8 +45,8 @@ int main( int argc, char** argv ) {
     game_factory()
       .buildEngineInstance()
       .onCreate()
-      .onInitialize()
       .onCreateWindow()
+      .onInitialize()
       .onStart();
 
     return 0;

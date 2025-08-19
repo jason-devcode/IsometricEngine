@@ -55,8 +55,8 @@ class EngineProps {
       return *this;
     }
 
-    EngineProps& setCurrentGame( std::shared_ptr<IGame> game ) {
-      m_currentGame = std::move(game);
+    EngineProps& setCurrentGame( IGame* game ) {
+      m_currentGame = game;
       return *this;
     }
 
@@ -69,15 +69,14 @@ class EngineProps {
     std::uint32_t m_vsyncLimit = 30;
     bool m_vsyncEnable = true;
     
-    std::shared_ptr<IGame> m_currentGame = nullptr;
+    IGame* m_currentGame = nullptr;
 };
 
 class EngineInstance {
   public:
     EngineInstance() {
-      props = EngineProps();
-      window = EngineWindow();
-      graphics = Graphics();
+//      props = EngineProps();
+//      window = EngineWindow();
     }
     
     // stage 1 - create engine instance resources
@@ -94,6 +93,13 @@ class EngineInstance {
 
     // stage 2 - initialize game engine resources
     EngineInstance& onInitialize() {
+      std::cout << "EngineInstance::onInitialize - Initializing game engine resources\n";
+      std::cout << std::hex;
+      std::cout << "Window: 0x" << window.m_window << "\n";
+      std::cout << std::nouppercase;
+      std::cout << "Surface: 0x" << window.m_surface << "\n";
+      std::cout << std::dec << std::nouppercase;
+
       if( 
           window.m_window != nullptr && 
           window.m_surface != nullptr 
@@ -112,6 +118,8 @@ class EngineInstance {
     EngineInstance& start() {
       SDL_Event event;
       bool quit = false;
+      
+      std::cout << "EngineInstance::start()" << "\n";
 
       while( !quit ) {
         // process all events
@@ -127,7 +135,7 @@ class EngineInstance {
         window.render();
       }
       return *this;
-    }
+   }
 
     EngineWindow window;
     EngineProps props;

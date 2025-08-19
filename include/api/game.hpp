@@ -21,8 +21,8 @@ class CGame : public IGame {
     ~CGame() {}
     
     // 1. stage to build game engine instance
-    CGame& buildEngineInstance() { 
-      engine = EngineInstance();
+    virtual CGame& buildEngineInstance() { 
+      //engine = EngineInstance();
       engine.props 
         .setTitle("default")
         .setScreenWidth(256)
@@ -33,10 +33,10 @@ class CGame : public IGame {
             return *this; 
     }
 
-    CGame& onCreateWindow() { 
+    virtual CGame& onCreateWindow() { 
       engine
-        .onInitialize()
-        .onCreate();
+        .onCreate()
+        .onInitialize();
       return *this;
     }
 
@@ -47,7 +47,7 @@ class CGame : public IGame {
     virtual CGame& onInitialize() { return *this; }
 
     // 3. start engine
-    CGame& onStart() {
+    virtual CGame& onStart() {
       engine.start();
       return *this;
     }

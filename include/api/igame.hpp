@@ -1,7 +1,6 @@
 #ifndef ABSTRACT_INTERFACE_GAME_HPP
 #define ABSTRACT_INTERFACE_GAME_HPP
 
-
 class IGame {
   public:
     IGame(){}
