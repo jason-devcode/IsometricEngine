@@ -1,4 +1,5 @@
 #include "../include/api/api.hpp"
+#include "../include/utils/geometry.hpp"
 
 class IsometricGame : public CGame {
   public:
@@ -16,16 +17,16 @@ class IsometricGame : public CGame {
     }
 
     IsometricGame& onInitialize() {
-      //std::cout << engine.graphics.pixels << std::endl ;
+      shape_drawer.setGraphics( &engine.graphics );
       return *this;
     }
 
     IsometricGame& loop() {
-      for( int Y = 0; Y < 256; Y++ ) {
-        for( int X = 0; X < 256; X++ ) {
-          engine.graphics.putPixel(X, Y, 0xFF0000FF);
-        }
-      }
+      shape_drawer.drawCircle( 256, 256, 80, 14, 0xFF0000FF );
+      //shape_drawer.drawFillCircle( 256, 256, 50, 0xFFFF0000 );
+      
+      shape_drawer.drawVerticalLine( 256, 0, 512, 0xFF00FF00 );
+      shape_drawer.drawHorizontalLine( 256, 0, 512, 0xFF00FF00 );
       return *this;
     }
 
@@ -33,6 +34,9 @@ class IsometricGame : public CGame {
 
       return *this;
     }
+
+  private:
+    DrawShapes shape_drawer;
 };
 
 /**
