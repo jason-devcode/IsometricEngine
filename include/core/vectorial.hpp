@@ -10,6 +10,7 @@
 /** for DBL_MAX */
 #include <cfloat>
 
+
 /*
  * Clase para realizar calculos con vectores 2D
  */
@@ -84,6 +85,13 @@ public_api class CVector2D {
       CVector2D vecB = input.normalize();
       return vecA.m_x * vecB.m_x + vecA.m_y * vecB.m_y;
     }
+    
+    static CVector2D& calculateDirection( double angleInRadians ) {
+      return CVector2D(
+          std::cos( angleInRadians ),
+          std::sin( angleInRadians )
+      );
+    }
 
     // Overload operators
     // Arithmetic operations with other vector
@@ -100,7 +108,9 @@ public_api class CVector2D {
     // Arithmetic operations with scalars
     CVector2D operator+( double scalar ) noexcept { return CVector2D( m_x + scalar, m_y + scalar ); }
     CVector2D operator-( double scalar ) noexcept { return CVector2D( m_x - scalar, m_y - scalar ); }
+    
     CVector2D operator*( double scalar ) noexcept { return CVector2D( m_x * scalar, m_y * scalar ); }
+
     CVector2D operator/( double scalar ) noexcept {
       double correctScalar = CORRECT_DENOMINATOR(scalar);
       return CVector2D( m_x / correctScalar, m_y / correctScalar );
@@ -123,6 +133,16 @@ public_api class CVector2D {
 
     double m_x = DEFAULT_COORD_VALUE;
     double m_y = DEFAULT_COORD_VALUE;
+
+  // Vectorial 2D Calculus
+  public:
+    static CVector2D calculateDirection( double angleInRadians ) {
+      return CVector2D(
+          std::cos( angleInRadians ),
+          std::sin( angleInRadians )
+      );
+    }
+
 };
 
 #endif // VECTORIAL_CALCULUS_CORE_HPP

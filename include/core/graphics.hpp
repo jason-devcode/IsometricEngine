@@ -43,7 +43,7 @@ class Graphics {
         return;
       pixels[ yCoord * width + xCoord ] = color;
     }
-//  private:
+
     std::uint32_t* pixels = nullptr;
     std::uint32_t width = 0;
     std::uint32_t height = 0;
