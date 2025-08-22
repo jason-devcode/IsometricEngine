@@ -4,7 +4,7 @@
 /** for std::shared_ptr */
 #include <memory>
 
-/** for std::uint32_t */
+/** for uint32_t */
 #include <cstdint>
 
 /** for std::string */
@@ -22,6 +22,8 @@
 /** for graphics */
 #include "./graphics.hpp"
 
+using std::uint32_t;
+
 class EngineProps {
   public:
     EngineProps() {}
@@ -30,17 +32,17 @@ class EngineProps {
       return *this;
     }
     
-    EngineProps& setScreenWidth( std::uint32_t width_px ) {
+    EngineProps& setScreenWidth( uint32_t width_px ) {
       m_screenWidth_px = width_px;
       return *this;
     }
 
-    EngineProps& setScreenHeight( std::uint32_t height_px ) {
+    EngineProps& setScreenHeight( uint32_t height_px ) {
       m_screenHeight_px = height_px;
       return *this;
     }
 
-    EngineProps& setScreenColor( std::uint32_t colorRGB888 ) {
+    EngineProps& setScreenColor( uint32_t colorRGB888 ) {
       m_screenColor = colorRGB888;
       return *this;
     }
@@ -50,7 +52,7 @@ class EngineProps {
       return *this;
     }
 
-    EngineProps& setVSyncLimit( std::uint32_t limit ) {
+    EngineProps& setVSyncLimit( uint32_t limit ) {
       m_vsyncLimit = limit;
       return *this;
     }
@@ -62,11 +64,11 @@ class EngineProps {
 
     std::string m_title = "Default App";
     
-    std::uint32_t m_screenWidth_px = 256;
-    std::uint32_t m_screenHeight_px = 256;
-    std::uint32_t m_screenColor = 0xFF000000;
+    uint32_t m_screenWidth_px = 256;
+    uint32_t m_screenHeight_px = 256;
+    uint32_t m_screenColor = 0xFF000000;
 
-    std::uint32_t m_vsyncLimit = 30;
+    uint32_t m_vsyncLimit = 30;
     bool m_vsyncEnable = true;
     
     IGame* m_currentGame = nullptr;
@@ -105,10 +107,10 @@ class EngineInstance {
           window.m_surface != nullptr 
       ) {
         graphics.setPixels( 
-            static_cast<std::uint32_t*>(window.m_surface->pixels)
+            static_cast<uint32_t*>(window.m_surface->pixels)
         );
         const auto graphWidth = window.m_surface->pitch / 4; 
-        const auto graphHeight = props.m_screenHeight_px - 1; 
+        const auto graphHeight = props.m_screenHeight_px; 
         graphics.setWidth(graphWidth > 0 ? graphWidth : 1);
         graphics.setHeight(graphHeight > 0 ? graphHeight : 1);
       }

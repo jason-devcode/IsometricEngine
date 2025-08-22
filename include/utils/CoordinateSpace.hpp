@@ -6,7 +6,7 @@
 #include "../core/vectorial.hpp"
 
 constexpr double DEFAULT_XAXIS_INCLINATION = 0.0;
-constexpr double DEFAULT_YAXIS_INCLINATION = trigonometry::HALF_PI;
+constexpr double DEFAULT_YAXIS_INCLINATION = HALF_PI;
 
 class CoordinateSpace {
   public:

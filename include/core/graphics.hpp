@@ -7,7 +7,7 @@
 /** for std::shared_ptr */
 #include <memory>
 
-/** for std::uint32_t */
+/** for uint32_t */
 #include <cstdint>
 
 /** for SDL2 surface utils */
@@ -16,17 +16,19 @@
 /** for I/O operators */
 #include <iostream>
 
+using std::uint32_t;
+
 class Graphics {
   public:
     Graphics() {}
     ~Graphics() {}
 
-    Graphics& setPixels( std::uint32_t* _pixels ) { 
+    Graphics& setPixels( uint32_t* _pixels ) { 
       this->pixels = _pixels;
       return *this;
     }
-    Graphics& setWidth( std::uint32_t _width ) { width = _width; return *this; }
-    Graphics& setHeight( std::uint32_t _height ) { height = _height; return *this; }
+    Graphics& setWidth( uint32_t _width ) { width = _width; return *this; }
+    Graphics& setHeight( uint32_t _height ) { height = _height; return *this; }
 
     void putPixel( int32_t xCoord, int32_t yCoord, uint32_t color ) {
       // Check if pixels is initalized or coords are out of bounds
@@ -35,18 +37,18 @@ class Graphics {
       //std::cout << "Graphics::putPixel() -" << pixels << "\n";
       if( 
           pixels == nullptr || 
-          width < xCoord || 
+          xCoord > width - 1 || 
           0 > xCoord || 
-          height < yCoord ||
+          yCoord > height - 1 ||
           0 > yCoord
       )
         return;
       pixels[ yCoord * width + xCoord ] = color;
     }
 
-    std::uint32_t* pixels = nullptr;
-    std::uint32_t width = 0;
-    std::uint32_t height = 0;
+    uint32_t* pixels = nullptr;
+    uint32_t width = 0;
+    uint32_t height = 0;
 };
 
 #endif

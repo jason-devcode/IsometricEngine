@@ -39,7 +39,6 @@ class DrawShapes {
       }
     }
 
-
     void drawVerticalLine( int x, int y1, int y2, std::uint32_t color ) {
       // if x is out of horizontal bounds then don't draw nothing
       CAN_DRAW( || x < 0 || x > graphics->width );

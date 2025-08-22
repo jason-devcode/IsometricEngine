@@ -6,7 +6,7 @@
 /** for SDL_Window and window utils */
 #include <SDL2/SDL.h>
 
-/** for std::uint32_t */
+/** for uint32_t */
 #include <cstdint>
 
 /** for std::string */
@@ -17,6 +17,9 @@
 
 /** for std::cerr */
 #include <iostream>
+
+using std::uint32_t;
+
 
 /** WINDOW INITIALIZATION ERROR CODE */
 #define ERROR_VIDEO_INIT_SYSTEM 100
@@ -48,11 +51,11 @@ class EngineWindow {
 
     EngineWindow& setTitle( std::string title ) { m_title = title; return *this; }
 
-    EngineWindow& setWidth( std::uint32_t width ) { m_width = width; return *this; }
+    EngineWindow& setWidth( uint32_t width ) { m_width = width; return *this; }
 
-    EngineWindow& setHeight( std::uint32_t height ) { m_height = height; return *this; }
+    EngineWindow& setHeight( uint32_t height ) { m_height = height; return *this; }
 
-    EngineWindow& setClearColor( std::uint32_t color ) { m_clearColor = color; return *this; }
+    EngineWindow& setClearColor( uint32_t color ) { m_clearColor = color; return *this; }
 
     // 1.stage initialize SDL Window system
     EngineWindow& initalize() {
@@ -111,9 +114,9 @@ class EngineWindow {
     SDL_Surface* m_surface = nullptr;
 
     std::string m_title;        // window title
-    std::uint32_t m_width;      // screen width in pixels
-    std::uint32_t m_height;     // screen height in pixels
-    std::uint32_t m_clearColor; // screen clear color
+    uint32_t m_width;      // screen width in pixels
+    uint32_t m_height;     // screen height in pixels
+    uint32_t m_clearColor; // screen clear color
 };
 
 

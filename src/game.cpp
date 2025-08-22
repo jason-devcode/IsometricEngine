@@ -3,6 +3,7 @@
 #include "../include/core/vectorial.hpp"
 #include "../include/utils/CoordinateSpace.hpp"
 #include "../include/utils/ScreenSpace.hpp"
+#include "../include/utils/trigonometry.hpp"
 
 #include <cstdint>
 
@@ -33,6 +34,8 @@ class IsometricGame : public CGame {
       CVector2D c1 = (CVector2D){ 0, 0 };
       return *this;
     }
+    
+    double angle = 0.0;
 
     IsometricGame& loop() {
       //shape_drawer.drawCircle( 256, 256, 80, 14, 0xFF0000FF );
@@ -41,24 +44,13 @@ class IsometricGame : public CGame {
       shape_drawer.drawVerticalLine( width >> 1, 0, height, 0xFF00FF00 );
       shape_drawer.drawHorizontalLine( height >> 1, 0, width, 0xFF00FF00 );
 
-      double x1 = 0.5, y1 = 0.5;
-      double x2 = -0.5, y2 = 0.5;
-      double x3 = -0.5, y3 = -0.5;
-      double x4 = 0.5, y4 = -0.5;
+      double x1 = std::cos( angle ) / 2, y1 = sin(angle) / 2;
       
       uint32_t xScreen, yScreen;
       xScreen = screen.normXtoScreen( x1 ), yScreen = screen.normYtoScreen( y1 );
-      shape_drawer.drawCircle( xScreen, yScreen, 80, 14, 0xFF0000FF );
-      
-      xScreen = screen.normXtoScreen( x2 ), yScreen = screen.normYtoScreen( y2 );
-      shape_drawer.drawCircle( xScreen, yScreen, 80, 14, 0xFF0000FF );
-      
-      xScreen = screen.normXtoScreen( x3 ), yScreen = screen.normYtoScreen( y3 );
-      shape_drawer.drawCircle( xScreen, yScreen, 80, 14, 0xFF0000FF );
-    
-      xScreen = screen.normXtoScreen( x4 ), yScreen = screen.normYtoScreen( y4 );
-      shape_drawer.drawCircle( xScreen, yScreen, 80, 14, 0xFF0000FF );
-
+      shape_drawer.drawFillCircle( xScreen, yScreen, 30, 0xFF00AA00 );
+   
+      angle += RADIAN * 0.1;
       return *this;
     }
 
