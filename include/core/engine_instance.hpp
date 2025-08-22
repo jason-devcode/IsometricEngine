@@ -107,8 +107,10 @@ class EngineInstance {
         graphics.setPixels( 
             static_cast<std::uint32_t*>(window.m_surface->pixels)
         );
-        graphics.setWidth( window.m_surface->pitch / 4 );
-        graphics.setHeight( props.m_screenWidth_px );
+        const auto graphWidth = window.m_surface->pitch / 4; 
+        const auto graphHeight = props.m_screenHeight_px - 1; 
+        graphics.setWidth(graphWidth > 0 ? graphWidth : 1);
+        graphics.setHeight(graphHeight > 0 ? graphHeight : 1);
       }
       return *this;
     }

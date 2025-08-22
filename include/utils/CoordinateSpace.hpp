@@ -31,8 +31,8 @@ class CoordinateSpace {
     double getXAxisInclination() const noexcept { return xAxisInclination; }
     double getYAxisInclination() const noexcept { return yAxisInclination; }
 
-    CVector2D& getXAxisDirection() const noexcept { return xAxis; }
-    CVector2D& getYAxisDirection() const noexcept { return yAxis; }
+    const CVector2D& getXAxisDirection() const noexcept { return xAxis; }
+    const CVector2D& getYAxisDirection() const noexcept { return yAxis; }
 
     CoordinateSpace& calculateXAxisDirection() noexcept {
       xAxis = CVector2D::calculateDirection( xAxisInclination );
@@ -48,8 +48,6 @@ class CoordinateSpace {
       return calculateXAxisDirection().calculateYAxisDirection();
     }
 
-    // Overload operator *= to apply coordinate space to a vector
-    CVector2D& operator*=()
 
     // unitary vectors to indicate the plane axis direction
     CVector2D yAxis; // unitary vector to indicate the direction of yAxis
@@ -60,24 +58,11 @@ class CoordinateSpace {
     double xAxisInclination; // By default 0 radians                             
 };
 
+// Overload operator *= to apply coordinate space to a vector
 CVector2D& operator*=( CVector2D& vec, CoordinateSpace& cs ) {
-  input = (cs.xAxis * vec.m_x) + (cs.yAxis * vec.m_y);
-  return input;
+  vec = (cs.xAxis * vec.m_x) + (cs.yAxis * vec.m_y);
+  return vec;
 }
 
-
-class CPoint2D {
-  public:
-    explicit CPoint2D() {
-
-    }
-    ~CPoint2D() {
-
-    }
-
-  private:
-    double x;
-    double y;
-};
 
 #endif

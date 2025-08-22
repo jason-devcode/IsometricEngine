@@ -10,34 +10,22 @@
 /** for DBL_MAX */
 #include <cfloat>
 
+/** for divition utils */
+#include "../utils/divition.hpp"
 
 /*
  * Clase para realizar calculos con vectores 2D
  */
-
-// This never should be real 0.0 or can crash application
-// because is used to simulate hipotetical divition by 0.
-#define LOGICAL_ZERO 0.0000001
-#define REAL_ZERO 0.0
-
 #define DEFAULT_COORD_VALUE REAL_ZERO
 
 #define MIN_VALUE REAL_ZERO
 #define MAX_VALUE DBL_MAX
 
 
-// Use this to give a direction to zero
-#define CORRECT_DENOMINATOR(value)\
-  (\
-   (value > -LOGICAL_ZERO && value < LOGICAL_ZERO)?\
-   (value < REAL_ZERO ? -LOGICAL_ZERO : LOGICAL_ZERO)\
-   :\
-   value\
-  )
-
-public_api class CVector2D {
+class CVector2D {
   public:
-    explicit CVector2D( double x, double y ) : m_x(x), m_y(y) {}
+    CVector2D() : m_x(0.0), m_y(0.0) {}
+    CVector2D( double x, double y ) : m_x(x), m_y(y) {}
 
     ~CVector2D() { m_x = m_y = DEFAULT_COORD_VALUE; }
 
@@ -84,13 +72,6 @@ public_api class CVector2D {
       CVector2D vecA = this->normalize();
       CVector2D vecB = input.normalize();
       return vecA.m_x * vecB.m_x + vecA.m_y * vecB.m_y;
-    }
-    
-    static CVector2D& calculateDirection( double angleInRadians ) {
-      return CVector2D(
-          std::cos( angleInRadians ),
-          std::sin( angleInRadians )
-      );
     }
 
     // Overload operators
