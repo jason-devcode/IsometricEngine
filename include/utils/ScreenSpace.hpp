@@ -3,6 +3,7 @@
 
 /** for std::uint32_t */
 #include <cstdint>
+#include <immintrin.h>
 
 /** for divition utils */
 #include "./divition.hpp"
@@ -38,15 +39,24 @@ public:
     return *this;
   }
 
+  ScreenSpace& calculateAspectRatio() {
+    aspectRatio = static_cast<double>( height ) * widthRatio;
+    return *this;
+  }
+
   inline uint32_t getWidth() const noexcept { return width; }
   inline uint32_t setHeight() const noexcept { return height; }
 
   inline double normXtoScreen(double xCoordNorm) const {
-    return halfWidth * (xCoordNorm + 1);
+    return halfWidth * (xCoordNorm * aspectRatio + 1);
   }
 
   inline double normYtoScreen(double yCoordNorm) const {
     return halfHeight * (-yCoordNorm + 1);
+  }
+
+  inline Vec2i normVec2fToScreen( Vec2f point ) const {
+    return Vec2i( normXtoScreen(point.m_x), normYtoScreen(point.m_y) );
   }
 
   inline double screenXtoNorm(uint32_t xCoordScreen) {
@@ -65,6 +75,7 @@ public:
   double heightRatio;
   double halfWidthRatio;
   double halfHeightRatio;
+  double aspectRatio;
 };
 
 #endif // SCREEN_SPACE_HPP

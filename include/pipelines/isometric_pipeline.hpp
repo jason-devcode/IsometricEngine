@@ -40,28 +40,38 @@ public:
     axisX = isometricSpace.getScaledXAxis();
     axisY = isometricSpace.getScaledYAxis();
 
-    screenSpace.setWidth(width).setHeight(height);
+    screenSpace
+      .setWidth(width)
+      .setHeight(height)
+      .calculateAspectRatio();
 
     return *this;
   }
 
   IsometricDrawerPipeline &setGraphics(Graphics *graphics) {
+    std::cout << "IsometricDrawerPipeline::setGraphics()\n";
     shape_drawer.setGraphics(graphics);
     return *this;
   }
 
-  void drawNormalizedLine(double x1, double y1, double x2, double y2,
-                          uint32_t color) {
+  void drawNormalizedLine(double x1, double y1, double x2, double y2, uint32_t color) {
     Vec2f A = axisX * x1 + axisY * y1;
     Vec2f B = axisX * x2 + axisY * y2;
+    
+    Vec2i screenPointA = screenSpace.normVec2fToScreen(A);
+    Vec2i screenPointB = screenSpace.normVec2fToScreen(B);
 
-    int screenX1 = screenSpace.normXtoScreen(A.m_x);
-    int screenY1 = screenSpace.normYtoScreen(A.m_y);
-    int screenX2 = screenSpace.normXtoScreen(B.m_x);
-    int screenY2 = screenSpace.normYtoScreen(B.m_y);
+    shape_drawer.drawNormalizedLine(
+      screenPointA.m_x, screenPointA.m_y, 
+      screenPointB.m_x, screenPointB.m_y, 
+      color
+    );
+  }
 
-    shape_drawer.drawNormalizedLine(screenX1, screenY1, screenX2, screenY2,
-                                    color);
+  void drawFillCircle( double cx, double cy, double radius, uint32_t color ) {
+    Vec2f center = axisX * cx + axisY * cy;
+    Vec2i screenPoint = screenSpace.normVec2fToScreen(center);
+    shape_drawer.drawFillCircle(screenPoint.m_x, screenPoint.m_y, radius, color);
   }
 
 private:

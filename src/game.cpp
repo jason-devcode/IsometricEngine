@@ -29,11 +29,14 @@ public:
     isometric_drawer.setGraphics(&engine.graphics).initalize(width, height);
     return *this;
   }
+  
+  double X = 0.5;
+  double Y = 0.5;
 
   IsometricGame &loop() {
 
-    const double axisLength = 7;
-    const double offset = -5;
+    const double axisLength = 12;
+    const double offset = -4;
 
     isometric_drawer.drawNormalizedLine(offset, offset, offset + axisLength, offset, 0xFFFF0000);
     isometric_drawer.drawNormalizedLine(offset, offset, offset, offset + axisLength, 0xFF00FF00);
@@ -44,10 +47,15 @@ public:
       isometric_drawer.drawNormalizedLine(offset + i, offset, offset + i - 1, offset - 1, 0xFFFF0000);
       isometric_drawer.drawNormalizedLine(offset, offset + i, offset - 1, offset + i - 1, 0xFF00FF00);
 
-
       isometric_drawer.drawNormalizedLine(offset, offset+i, offset+axisLength, offset+i, 0xFF00FF00);
       isometric_drawer.drawNormalizedLine(offset+i, offset, offset+i, offset+axisLength, 0xFFFF0000);
     }
+
+  
+    for (int i = 0; i < axisLength; ++i) {
+      isometric_drawer.drawFillCircle( offset + X, offset + 0.5 + i + fabs(sin(X * HALF_PI)), 8, 0xFF00A0FF );
+    }
+    X = X < axisLength ? X + 0.001 : 0.5;
 
     return *this;
   }
@@ -56,8 +64,8 @@ public:
 
 private:
   IsometricDrawerPipeline isometric_drawer;
-  int width = 512 << 0;
-  int height = 512 << 0;
+  int width = 1280;
+  int height = 720;
 };
 
 /**
