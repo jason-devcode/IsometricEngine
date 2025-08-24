@@ -1,65 +1,63 @@
 #include "../include/api/api.hpp"
-#include "../include/utils/geometry.hpp"
 #include "../include/core/vectorial.hpp"
 #include "../include/utils/CoordinateSpace.hpp"
 #include "../include/utils/ScreenSpace.hpp"
+#include "../include/utils/geometry.hpp"
 #include "../include/utils/trigonometry.hpp"
+
+#include "../include/pipelines/isometric_pipeline.hpp"
 
 #include <cstdint>
 
 using std::uint32_t;
 
 class IsometricGame : public CGame {
-  public:
-    IsometricGame() {}
-    ~IsometricGame() {}
+public:
+  IsometricGame() {}
+  ~IsometricGame() {}
 
-    IsometricGame& onCreate() {
-      engine.props
-        .setTitle("Isometric Engine V0.0.1a")
+  IsometricGame &onCreate() {
+    engine.props.setTitle("Isometric Engine V0.0.1a")
         .setScreenWidth(width)
         .setScreenHeight(height)
         .setScreenColor(0xFF000000)
         .setCurrentGame(this);
+    return *this;
+  }
 
-      screen
-        .setWidth( width )
-        .setHeight( height );
-      return *this;
+  IsometricGame &onInitialize() {
+    isometric_drawer.setGraphics(&engine.graphics).initalize(width, height);
+    return *this;
+  }
+
+  IsometricGame &loop() {
+
+    const double axisLength = 7;
+    const double offset = -5;
+
+    isometric_drawer.drawNormalizedLine(offset, offset, offset + axisLength, offset, 0xFFFF0000);
+    isometric_drawer.drawNormalizedLine(offset, offset, offset, offset + axisLength, 0xFF00FF00);
+    isometric_drawer.drawNormalizedLine(offset - 1, offset - 1, offset - 1, offset + axisLength - 1, 0xFF00FF00);
+    isometric_drawer.drawNormalizedLine(offset - 1, offset - 1, offset + axisLength - 1, offset - 1, 0xFFFF0000);
+
+    for (int i = 0; i <= axisLength; ++i) {
+      isometric_drawer.drawNormalizedLine(offset + i, offset, offset + i - 1, offset - 1, 0xFFFF0000);
+      isometric_drawer.drawNormalizedLine(offset, offset + i, offset - 1, offset + i - 1, 0xFF00FF00);
+
+
+      isometric_drawer.drawNormalizedLine(offset, offset+i, offset+axisLength, offset+i, 0xFF00FF00);
+      isometric_drawer.drawNormalizedLine(offset+i, offset, offset+i, offset+axisLength, 0xFFFF0000);
     }
 
-    IsometricGame& onInitialize() {
-      shape_drawer.setGraphics( &engine.graphics );
-      
-      CVector2D c1 = (CVector2D){ 0, 0 };
-      return *this;
-    }
-    
-    double angle = 0.0;
+    return *this;
+  }
 
-    IsometricGame& loop() {
-      //shape_drawer.drawCircle( 256, 256, 80, 14, 0xFF0000FF );
-      //shape_drawer.drawFillCircle( 256, 256, 50, 0xFFFF0000 );
-      
-      shape_drawer.drawVerticalLine( width >> 1, 0, height, 0xFF00FF00 );
-      shape_drawer.drawHorizontalLine( height >> 1, 0, width, 0xFF00FF00 );
+  IsometricGame &onRelease() { return *this; }
 
-      double x1 = std::cos( angle ) / 2, y1 = sin(angle) / 2;
-      
-      uint32_t xScreen, yScreen;
-      xScreen = screen.normXtoScreen( x1 ), yScreen = screen.normYtoScreen( y1 );
-      shape_drawer.drawFillCircle( xScreen, yScreen, 30, 0xFF00AA00 );
-   
-      angle += RADIAN * 0.1;
-      return *this;
-    }
-
-    IsometricGame& onRelease() { return *this; }
-  private:
-    int width = 512 << 1;
-    int height = 512 << 1;
-    DrawShapes shape_drawer;
-    ScreenSpace screen;
+private:
+  IsometricDrawerPipeline isometric_drawer;
+  int width = 512 << 0;
+  int height = 512 << 0;
 };
 
 /**
@@ -67,24 +65,21 @@ class IsometricGame : public CGame {
  */
 IsometricGame game_factory() { return IsometricGame(); }
 
-int main( int argc, char** argv ) {
+int main(int argc, char **argv) {
   try {
     game_factory()
-      .buildEngineInstance()
-      .onCreate()
-      .onCreateWindow()
-      .onInitialize()
-      .onStart();
+        .buildEngineInstance()
+        .onCreate()
+        .onCreateWindow()
+        .onInitialize()
+        .onStart();
 
     return 0;
-  }
-  catch ( int errorCode ) {
+  } catch (int errorCode) {
     std::cerr << "ERROR: Code " << errorCode << "\n";
     return -1;
-  }
-  catch (const std::exception& error) {
+  } catch (const std::exception &error) {
     return -1;
   }
   return 0;
 }
-
