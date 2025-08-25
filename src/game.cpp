@@ -24,9 +24,25 @@ public:
         .setCurrentGame(this);
     return *this;
   }
+  
+  Vec2f *cameraScroll = nullptr;
 
   IsometricGame &onInitialize() {
-    isometric_drawer.setGraphics(&engine.graphics).initalize(width, height);
+    isometric_drawer
+      .setGraphics(&engine.graphics)
+      .initalize(width, height);
+    
+    cameraScroll = isometric_drawer.getCameraScroll();
+
+    constexpr double cameraStep = 0.01;
+
+    inputSystem.keyboard.addKeyPress( 
+      KEY_DOWN, 
+      [&]( EventData event ) {
+        cameraScroll->m_y -= cameraStep * engine.deltatime;
+      }
+    );
+
     return *this;
   }
   
@@ -34,28 +50,27 @@ public:
   double Y = 0.5;
 
   IsometricGame &loop() {
+    const double axisLength = 24;
 
-    const double axisLength = 12;
-    const double offset = -4;
-
-    isometric_drawer.drawNormalizedLine(offset, offset, offset + axisLength, offset, 0xFFFF0000);
-    isometric_drawer.drawNormalizedLine(offset, offset, offset, offset + axisLength, 0xFF00FF00);
-    isometric_drawer.drawNormalizedLine(offset - 1, offset - 1, offset - 1, offset + axisLength - 1, 0xFF00FF00);
-    isometric_drawer.drawNormalizedLine(offset - 1, offset - 1, offset + axisLength - 1, offset - 1, 0xFFFF0000);
+    isometric_drawer.drawNormalizedLine(0.0, 0.0, 0.0 + axisLength, 0.0, 0xFFFF0000);
+    isometric_drawer.drawNormalizedLine(0.0, 0.0, 0.0, 0.0 + axisLength, 0xFF00FF00);
+    isometric_drawer.drawNormalizedLine(0.0 - 1, 0.0 - 1, 0.0 - 1, 0.0 + axisLength - 1, 0xFF00FF00);
+    isometric_drawer.drawNormalizedLine(0.0 - 1, 0.0 - 1, 0.0 + axisLength - 1, 0.0 - 1, 0xFFFF0000);
 
     for (int i = 0; i <= axisLength; ++i) {
-      isometric_drawer.drawNormalizedLine(offset + i, offset, offset + i - 1, offset - 1, 0xFFFF0000);
-      isometric_drawer.drawNormalizedLine(offset, offset + i, offset - 1, offset + i - 1, 0xFF00FF00);
+      isometric_drawer.drawNormalizedLine(0.0 + i, 0.0, 0.0 + i - 1, 0.0 - 1, 0xFFFF0000);
+      isometric_drawer.drawNormalizedLine(0.0, 0.0 + i, 0.0 - 1, 0.0 + i - 1, 0xFF00FF00);
 
-      isometric_drawer.drawNormalizedLine(offset, offset+i, offset+axisLength, offset+i, 0xFF00FF00);
-      isometric_drawer.drawNormalizedLine(offset+i, offset, offset+i, offset+axisLength, 0xFFFF0000);
+      isometric_drawer.drawNormalizedLine(0.0, 0.0+i, 0.0+axisLength, 0.0+i, 0xFF00FF00);
+      isometric_drawer.drawNormalizedLine(0.0+i, 0.0, 0.0+i, 0.0+axisLength, 0xFFFF0000);
     }
 
   
     for (int i = 0; i < axisLength; ++i) {
-      isometric_drawer.drawFillCircle( offset + X, offset + 0.5 + i + fabs(sin(X * HALF_PI)), 8, 0xFF00A0FF );
+      isometric_drawer.drawFillCircle( 0.0 + X, 0.0 + 0.5 + i + fabs(sin(X * HALF_PI)), 8, 0xFF00A0FF );
     }
     X = X < axisLength ? X + 0.001 : 0.5;
+    cameraScroll->m_y -= 0.0001;
 
     return *this;
   }

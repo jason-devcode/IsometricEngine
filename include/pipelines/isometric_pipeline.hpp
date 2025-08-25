@@ -54,14 +54,16 @@ public:
     return *this;
   }
 
+  Vec2f* getCameraScroll() { return &cameraScroll; }
+
   void drawNormalizedLine(double x1, double y1, double x2, double y2, uint32_t color) {
-    Vec2f A = axisX * x1 + axisY * y1;
-    Vec2f B = axisX * x2 + axisY * y2;
+    Vec2f A = (axisX * x1 + axisY * y1) + cameraScroll;
+    Vec2f B = (axisX * x2 + axisY * y2) + cameraScroll;
     
     Vec2i screenPointA = screenSpace.normVec2fToScreen(A);
     Vec2i screenPointB = screenSpace.normVec2fToScreen(B);
 
-    shape_drawer.drawNormalizedLine(
+    shape_drawer.drawLine(
       screenPointA.m_x, screenPointA.m_y, 
       screenPointB.m_x, screenPointB.m_y, 
       color
@@ -69,16 +71,16 @@ public:
   }
 
   void drawFillCircle( double cx, double cy, double radius, uint32_t color ) {
-    Vec2f center = axisX * cx + axisY * cy;
+    Vec2f center = (axisX * cx + axisY * cy) + cameraScroll;
     Vec2i screenPoint = screenSpace.normVec2fToScreen(center);
     shape_drawer.drawFillCircle(screenPoint.m_x, screenPoint.m_y, radius, color);
   }
-
 private:
   CoordinateSpace isometricSpace;
   ScreenSpace screenSpace;
   DrawShapes shape_drawer;
   Vec2f axisX, axisY;
+  Vec2f cameraScroll;
 };
 
 #endif // ISOMETRIC_SHAPE_DRAWER_PIPELINE_HPP

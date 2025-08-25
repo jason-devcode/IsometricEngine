@@ -6,6 +6,7 @@
 
 /** for sqrt */
 #include <cmath>
+#include <cstdlib>
 
 /** for Graphics class */
 #include "../core/graphics.hpp"
@@ -101,6 +102,38 @@ public:
                          color);
       xPixel += normX;
       yPixel += normY;
+    }
+  }
+
+  void drawLine(int x1, int y1, int x2, int y2, uint32_t color) {
+    // Check if line is visible at screen
+    CAN_DRAW(|| (y1 < 0 && y2 < 0) ||
+             (y1 > graphics->height && y2 > graphics->height) ||
+             (x1 < 0 && x2 < 0) ||
+             (x1 > graphics->width && x2 > graphics->width));
+    
+    int DX = x2 - x1;
+    int DY = y2 - y1;
+
+    double steps = abs(abs( DX ) > abs( DY ) ? DX : DY);
+
+    if( steps == 0.0 ) { return; }
+    
+    int absSteps = abs(steps);
+
+    double recSteps = 1.0 / steps;
+
+    double stepsX = DX * recSteps;
+    double stepsY = DY * recSteps;
+
+    double xPixel = x1;
+    double yPixel = y1;
+
+    for (int lineIterator = 0; lineIterator < absSteps; ++lineIterator) {
+      graphics->putPixel(static_cast<int>(xPixel), static_cast<int>(yPixel),
+                         color);
+      xPixel += stepsX;
+      yPixel += stepsY;
     }
   }
 
