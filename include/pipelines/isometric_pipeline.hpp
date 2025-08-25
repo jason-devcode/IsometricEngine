@@ -1,6 +1,7 @@
 #ifndef ISOMETRIC_SHAPE_DRAWER_PIPELINE_HPP
 #define ISOMETRIC_SHAPE_DRAWER_PIPELINE_HPP
 
+#include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <sys/types.h>
@@ -18,6 +19,10 @@ constexpr double isometricXAxisInclination = degreesToRadians(30);
 constexpr double isometricYAxisInclination = degreesToRadians(90 + 60);
 constexpr double xAxisScale = 1 / 10.0;
 constexpr double yAxisScale = 1 / 10.0;
+
+#define FRONT_FACE (1 << 0)
+#define LEFT_FACE (1 << 1)
+#define TOP_FACE (1 << 2)
 
 class IsometricDrawerPipeline {
 public:
@@ -74,6 +79,91 @@ public:
     Vec2f center = (axisX * cx + axisY * cy) + cameraScroll;
     Vec2i screenPoint = screenSpace.normVec2fToScreen(center);
     shape_drawer.drawFillCircle(screenPoint.m_x, screenPoint.m_y, radius, color);
+  }
+
+  void drawFace( Vec2i &A, Vec2i& B, Vec2i& C, Vec2i& D, uint32_t colorFront, uint32_t colorLeft, uint32_t colorTop, uint32_t visibilityMask ) {
+    if( visibilityMask == 0 ) return;
+
+    double dx = B.m_x - A.m_x;
+    double dy = B.m_y - A.m_y;
+
+    double xVariation = dx / (dy != 0.0 ? dy : 1 );
+    double yVariation = 1;
+    
+    // top face
+    double x1 = B.m_x; double y1 = B.m_y;
+    double x2 = B.m_x; double y2 = B.m_y; 
+    double x3 = A.m_x; double y3 = A.m_y;
+    double x4 = D.m_x;
+
+    // front face
+    double y4 = D.m_y;
+    
+    int steps = fabs(dy);
+
+    for( int linePoint = 0; linePoint <= steps; ++linePoint ) {
+      // Draw top face
+      if( visibilityMask & TOP_FACE ) {
+        shape_drawer.drawHorizontalLine(y1, x1, x2, colorTop);
+        shape_drawer.drawHorizontalLine(y3, x3, x4, colorTop);
+      }
+      
+      // Draw front face
+      if( visibilityMask & FRONT_FACE ) {
+        shape_drawer.drawHorizontalLine(y4, x4, D.m_x, colorFront);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint, C.m_x, D.m_x, colorFront);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps, C.m_x, x4, colorFront);
+      }
+
+      // Draw left face
+      if( visibilityMask & LEFT_FACE ) {
+        shape_drawer.drawHorizontalLine(y4, A.m_x, x3, colorLeft);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint, A.m_x, C.m_x, colorLeft);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps, x3, C.m_x, colorLeft);
+      }
+
+      x1 -= xVariation; y1 += yVariation;
+      x2 += xVariation;
+      x3 -= xVariation; x4 += xVariation; y3 += yVariation;
+      y4 += yVariation;
+    }
+  }
+
+  void drawFillCube( 
+    double x, double y, double z, 
+    uint32_t frontColor, uint32_t leftColor, uint32_t topColor, 
+    uint32_t visibilityMask
+  ) {
+    static Vec2f cubeVertices[] = {
+      // top
+      {0.0, 1.0},  // A
+      {1.0, 1.0},  // B
+      {0.0, 0.0},  // C
+      {1.0, 0.0},  // D
+      {-1.0,-1.0}, // F
+    };
+
+    Vec2i isometricCubeVertex[5] = {
+      screenSpace.normVec2fToScreen((axisX * (cubeVertices[0].m_x + x + z) + axisY * (cubeVertices[0].m_y + y + z)) + cameraScroll),
+      screenSpace.normVec2fToScreen((axisX * (cubeVertices[1].m_x + x + z) + axisY * (cubeVertices[1].m_y + y + z)) + cameraScroll),
+      screenSpace.normVec2fToScreen((axisX * (cubeVertices[2].m_x + x + z) + axisY * (cubeVertices[2].m_y + y + z)) + cameraScroll),
+      screenSpace.normVec2fToScreen((axisX * (cubeVertices[3].m_x + x + z) + axisY * (cubeVertices[3].m_y + y + z)) + cameraScroll),
+      screenSpace.normVec2fToScreen((axisX * (cubeVertices[4].m_x + x + z) + axisY * (cubeVertices[4].m_y + y + z)) + cameraScroll)
+    };
+  
+    static int cubeFaces[1][4] = {
+      // top face
+      { 0, 1, 2, 3 },
+    };
+
+    auto &topFace = cubeFaces[ 0 ];
+
+    Vec2i& topA = isometricCubeVertex[ topFace[ 0 ] ];
+    Vec2i& topB = isometricCubeVertex[ topFace[ 1 ] ];
+    Vec2i& topC = isometricCubeVertex[ topFace[ 2 ] ];
+    Vec2i& topD = isometricCubeVertex[ topFace[ 3 ] ];
+    
+    drawFace(topA, topB, topC, topD, frontColor, leftColor, topColor, visibilityMask);
   }
 private:
   CoordinateSpace isometricSpace;

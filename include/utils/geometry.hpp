@@ -107,10 +107,7 @@ public:
 
   void drawLine(int x1, int y1, int x2, int y2, uint32_t color) {
     // Check if line is visible at screen
-    CAN_DRAW(|| (y1 < 0 && y2 < 0) ||
-             (y1 > graphics->height && y2 > graphics->height) ||
-             (x1 < 0 && x2 < 0) ||
-             (x1 > graphics->width && x2 > graphics->width));
+    CAN_DRAW();
     
     int DX = x2 - x1;
     int DY = y2 - y1;

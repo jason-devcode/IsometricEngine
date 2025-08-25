@@ -7,21 +7,27 @@
 /** for std::uint32_t */
 #include <cstdint>
 
-
 /** for IGame */
 #include "./igame.hpp"
 
+/** for std::cout */
+#include <iostream>
 
 /** forward declaration of EngineInstance */
 class EngineInstance;
 
 class CGame : public IGame {
   public:
-    CGame() {}
-    ~CGame() {}
+    CGame() {
+      std::cout << "CGame::CGame()\n";
+    }
+    ~CGame() {
+      std::cout << "CGame::~CGame()\n";
+    }
     
     // 1. stage to build game engine instance
     virtual CGame& buildEngineInstance() { 
+      std::cout << "CGame::buildEngineInstance()\n";
       //engine = EngineInstance();
       engine.props 
         .setTitle("default")
@@ -33,7 +39,8 @@ class CGame : public IGame {
             return *this; 
     }
 
-    virtual CGame& onCreateWindow() { 
+    virtual CGame& onCreateWindow() {
+      std::cout << "CGame::onCreateWindow()\n";
       engine
         .onCreate()
         .onInitialize();

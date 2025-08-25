@@ -8,13 +8,18 @@
 #include "../include/pipelines/isometric_pipeline.hpp"
 
 #include <cstdint>
+#include <sys/types.h>
 
 using std::uint32_t;
 
 class IsometricGame : public CGame {
 public:
-  IsometricGame() {}
-  ~IsometricGame() {}
+  IsometricGame() {
+    std::cout << "IsometricGame::IsometricGame()\n";
+  }
+  ~IsometricGame() {
+    std::cout << "IsometricGame::~IsometricGame()\n";
+  }
 
   IsometricGame &onCreate() {
     engine.props.setTitle("Isometric Engine V0.0.1a")
@@ -27,51 +32,105 @@ public:
   
   Vec2f *cameraScroll = nullptr;
 
+
   IsometricGame &onInitialize() {
     isometric_drawer
       .setGraphics(&engine.graphics)
       .initalize(width, height);
+
+    auto& keyboard = engine.input.keyboard;
     
     cameraScroll = isometric_drawer.getCameraScroll();
 
-    constexpr double cameraStep = 0.01;
+    constexpr double cameraStep = 0.009;
 
-    inputSystem.keyboard.addKeyPress( 
-      KEY_DOWN, 
-      [&]( EventData event ) {
-        cameraScroll->m_y -= cameraStep * engine.deltatime;
-      }
-    );
+    keyboard.addKeyPressed( 'a', [&](EventData event) { cameraScroll->m_x += cameraStep; } );
+    keyboard.addKeyPressed( 'd', [&](EventData event) { cameraScroll->m_x -= cameraStep; } );
+    keyboard.addKeyPressed( 'w', [&](EventData event) { cameraScroll->m_y -= cameraStep; } );
+    keyboard.addKeyPressed( 's', [&](EventData event) { cameraScroll->m_y += cameraStep; } );
 
+    engine.input.keyboard.triggerListeners( 'a', KeyEventType::PRESSED );
     return *this;
   }
   
-  double X = 0.5;
-  double Y = 0.5;
-
-  IsometricGame &loop() {
-    const double axisLength = 24;
-
-    isometric_drawer.drawNormalizedLine(0.0, 0.0, 0.0 + axisLength, 0.0, 0xFFFF0000);
-    isometric_drawer.drawNormalizedLine(0.0, 0.0, 0.0, 0.0 + axisLength, 0xFF00FF00);
-    isometric_drawer.drawNormalizedLine(0.0 - 1, 0.0 - 1, 0.0 - 1, 0.0 + axisLength - 1, 0xFF00FF00);
-    isometric_drawer.drawNormalizedLine(0.0 - 1, 0.0 - 1, 0.0 + axisLength - 1, 0.0 - 1, 0xFFFF0000);
-
-    for (int i = 0; i <= axisLength; ++i) {
-      isometric_drawer.drawNormalizedLine(0.0 + i, 0.0, 0.0 + i - 1, 0.0 - 1, 0xFFFF0000);
-      isometric_drawer.drawNormalizedLine(0.0, 0.0 + i, 0.0 - 1, 0.0 + i - 1, 0xFF00FF00);
-
-      isometric_drawer.drawNormalizedLine(0.0, 0.0+i, 0.0+axisLength, 0.0+i, 0xFF00FF00);
-      isometric_drawer.drawNormalizedLine(0.0+i, 0.0, 0.0+i, 0.0+axisLength, 0xFFFF0000);
-    }
-
   
-    for (int i = 0; i < axisLength; ++i) {
-      isometric_drawer.drawFillCircle( 0.0 + X, 0.0 + 0.5 + i + fabs(sin(X * HALF_PI)), 8, 0xFF00A0FF );
-    }
-    X = X < axisLength ? X + 0.001 : 0.5;
-    cameraScroll->m_y -= 0.0001;
+  IsometricGame &loop() {
+    const double axisLength = 25;
+    
+    int HEIGHT = 4;
+    int SIDE = 10;
 
+    int mapa[HEIGHT][SIDE*SIDE] = {
+      {
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,
+      },
+      {
+        1,1,1,0,0,0,0,1,1,1,
+        1,1,0,0,0,0,0,0,1,1,
+        1,0,0,0,0,0,0,0,0,1,
+        0,0,0,0,1,0,0,0,0,0,
+        0,0,0,1,1,1,0,0,0,0,
+        0,0,1,1,1,1,1,0,0,0,
+        0,0,0,1,1,1,0,0,0,0,
+        1,0,0,0,1,0,0,0,0,1,
+        1,1,0,0,0,0,0,0,1,1,
+        1,1,1,0,0,0,0,1,1,1,
+      },
+      {
+        1,1,0,0,0,0,0,0,1,1,
+        1,0,0,0,0,0,0,0,0,1,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,0,0,0,1,
+        1,1,0,0,0,0,0,0,1,1,
+      },
+      {
+        1,0,0,0,0,0,0,0,0,1,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,0,0,0,1,
+      },
+    };
+    
+    for(int Z = 0; Z < HEIGHT; ++Z ) {
+      for( int Y = SIDE - 1; Y > -1; --Y ) {
+        for( int X = SIDE - 1; X > -1; --X ) {
+          int indexCell = Y * SIDE + X;
+          int& cell = mapa[Z][ indexCell ];
+        
+          int frontFaceIsVisible = Y > 0 ? FRONT_FACE * !mapa[Z][ (Y-1) * SIDE + X ] : FRONT_FACE;
+          int leftFaceIsVisible = X > 0 ? LEFT_FACE * !mapa[Z][ Y * SIDE + X-1 ] : LEFT_FACE;
+          int topFaceIsVisible = Z < HEIGHT-1 ? TOP_FACE * !mapa[Z+1][ indexCell ] : TOP_FACE;
+
+          if( Z == 0 ) {
+             
+          }
+
+          if(cell) {
+              isometric_drawer.drawFillCube(X,Y,Z, 0xFF505050, 0xFF909090, 0xFFB0B0B0 + 0x00101010 * Z, frontFaceIsVisible | leftFaceIsVisible | topFaceIsVisible);
+          }
+        }
+      }
+    }
     return *this;
   }
 
