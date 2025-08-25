@@ -2,6 +2,7 @@
 #define CORE_ENGINE_INSTANCE_HPP
 
 /** for std::shared_ptr */
+#include <SDL2/SDL_events.h>
 #include <memory>
 
 /** for uint32_t */
@@ -21,6 +22,10 @@
 
 /** for graphics */
 #include "./graphics.hpp"
+
+/** for input system */
+#include "./input_system.hpp"
+#include "keyboard_manager.hpp"
 
 using std::uint32_t;
 
@@ -129,7 +134,19 @@ class EngineInstance {
         // process all events
         while( SDL_PollEvent(&event) ) {
           if( event.type == SDL_QUIT ) quit = true;
+          const auto keyCode = event.key.keysym.sym;
+
+          switch (event.type) {
+            case SDL_KEYDOWN:
+              input.keyboard.setKeyState( keyCode, true );
+              break;
+            case SDL_KEYUP:
+              input.keyboard.setKeyState( keyCode, false );
+              break;
+          }
         }
+        
+        input.keyboard.triggerPressedKeyListeners();
         
         window.clear();
 
@@ -142,6 +159,7 @@ class EngineInstance {
    }
 
     EngineWindow window;
+    InputSystem input;
     EngineProps props;
     Graphics graphics;
 };
