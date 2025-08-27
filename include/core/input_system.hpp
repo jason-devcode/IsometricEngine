@@ -5,6 +5,15 @@
 
 #include <iostream>
 
+class MouseManager {
+  public:
+    MouseManager(){}
+    ~MouseManager() {}
+    int cursorX = 0;
+    int cursorY = 0;
+};
+
+
 class InputSystem {
   public:
     InputSystem() {
@@ -15,6 +24,7 @@ class InputSystem {
     }
 
     KeyboardManager keyboard;
+    MouseManager mouse;
 };
 
 #endif

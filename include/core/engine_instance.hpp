@@ -3,6 +3,7 @@
 
 /** for std::shared_ptr */
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_mouse.h>
 #include <memory>
 
 /** for uint32_t */
@@ -147,6 +148,9 @@ class EngineInstance {
         }
         
         input.keyboard.triggerPressedKeyListeners();
+
+        // Update mouse state
+        SDL_GetMouseState(&input.mouse.cursorX, &input.mouse.cursorY);
         
         window.clear();
 
