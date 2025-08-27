@@ -25,7 +25,7 @@ public:
     engine.props.setTitle("Isometric Engine V0.0.1a")
         .setScreenWidth(width)
         .setScreenHeight(height)
-        .setScreenColor(0xFF000000)
+        .setScreenColor(0xFF101010)
         .setCurrentGame(this);
     return *this;
   }
@@ -41,8 +41,9 @@ public:
     auto& keyboard = engine.input.keyboard;
     
     cameraScroll = isometric_drawer.getCameraScroll();
+    cameraScroll->m_y -= 1;
 
-    constexpr double cameraStep = 0.009;
+    constexpr double cameraStep = 0.003;
 
     keyboard.addKeyPressed( 'a', [&](EventData event) { cameraScroll->m_x += cameraStep; } );
     keyboard.addKeyPressed( 'd', [&](EventData event) { cameraScroll->m_x -= cameraStep; } );
@@ -55,8 +56,6 @@ public:
   
   
   IsometricGame &loop() {
-    const double axisLength = 25;
-    
     int HEIGHT = 4;
     int SIDE = 10;
 
@@ -110,6 +109,16 @@ public:
         1,0,0,0,0,0,0,0,0,1,
       },
     };
+
+    int gridLenght = 50;
+
+    for( int axis = 0; axis <= gridLenght; ++axis ) {
+      isometric_drawer.drawNormalizedLine(axis, 0, axis, gridLenght, 0xFF00B000);
+      isometric_drawer.drawNormalizedLine(0, axis, gridLenght, axis, 0xFFFF0000);
+    }
+
+    int offsetMapX = 15;
+    int offsetMapY = 15;
     
     for(int Z = 0; Z < HEIGHT; ++Z ) {
       for( int Y = SIDE - 1; Y > -1; --Y ) {
@@ -120,17 +129,35 @@ public:
           int frontFaceIsVisible = Y > 0 ? FRONT_FACE * !mapa[Z][ (Y-1) * SIDE + X ] : FRONT_FACE;
           int leftFaceIsVisible = X > 0 ? LEFT_FACE * !mapa[Z][ Y * SIDE + X-1 ] : LEFT_FACE;
           int topFaceIsVisible = Z < HEIGHT-1 ? TOP_FACE * !mapa[Z+1][ indexCell ] : TOP_FACE;
+          
+          uint32_t color = 0xFFB0B0B0;
 
           if( Z == 0 ) {
-             
+             bool isBlack = (X ^ Y) & 1;
+              if(isBlack) color = 0xFF000000;
           }
 
           if(cell) {
-              isometric_drawer.drawFillCube(X,Y,Z, 0xFF505050, 0xFF909090, 0xFFB0B0B0 + 0x00101010 * Z, frontFaceIsVisible | leftFaceIsVisible | topFaceIsVisible);
+              isometric_drawer.drawFillCube( X + offsetMapX, Y + offsetMapY, Z, 0xFF505050, 0xFF909090, color + 0x00101010 * Z, frontFaceIsVisible | leftFaceIsVisible | topFaceIsVisible);
           }
         }
       }
     }
+    
+    Vec2i pointer = isometric_drawer.mouseCoordsToNormMap( engine.input.mouse.cursorX, engine.input.mouse.cursorY );
+    
+    if(pointer.m_x >= 0 && pointer.m_y >= 0) {
+      for( int Y = -1; Y <= 1; ++Y ) {
+        for( int X = -1; X <= 1; ++X ) {
+          int cellX = pointer.m_x + X;
+          int cellY = pointer.m_y + Y;
+          if( cellX > -1 && cellY > -1 ) {
+            isometric_drawer.drawFillCube(cellX, cellY, 0, 0, 0, 0xFFFFFF00, TOP_FACE);
+          }
+        }
+      }
+    }
+    
     return *this;
   }
 
@@ -138,8 +165,8 @@ public:
 
 private:
   IsometricDrawerPipeline isometric_drawer;
-  int width = 1280;
-  int height = 720;
+  int width = 1920;
+  int height = 1080;
 };
 
 /**

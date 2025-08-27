@@ -17,8 +17,10 @@ using std::uint32_t;
 
 constexpr double isometricXAxisInclination = degreesToRadians(30);
 constexpr double isometricYAxisInclination = degreesToRadians(90 + 60);
-constexpr double xAxisScale = 1 / 10.0;
-constexpr double yAxisScale = 1 / 10.0;
+constexpr double xCells = 15.0;
+constexpr double yCells = 15.0;
+constexpr double xAxisScale = 1 / xCells;
+constexpr double yAxisScale = 1 / yCells;
 
 #define FRONT_FACE (1 << 0)
 #define LEFT_FACE (1 << 1)
@@ -104,22 +106,22 @@ public:
     for( int linePoint = 0; linePoint <= steps; ++linePoint ) {
       // Draw top face
       if( visibilityMask & TOP_FACE ) {
-        shape_drawer.drawHorizontalLine(y1, x1, x2, colorTop);
-        shape_drawer.drawHorizontalLine(y3, x3, x4, colorTop);
+        shape_drawer.drawHorizontalLine(y1+1, x1-1, x2-1, colorTop);
+        shape_drawer.drawHorizontalLine(y3-1, x3-1, x4-1, colorTop);
       }
       
       // Draw front face
       if( visibilityMask & FRONT_FACE ) {
-        shape_drawer.drawHorizontalLine(y4, x4, D.m_x, colorFront);
-        shape_drawer.drawHorizontalLine(C.m_y + linePoint, C.m_x, D.m_x, colorFront);
-        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps, C.m_x, x4, colorFront);
+        shape_drawer.drawHorizontalLine(y4+1, x4+1, D.m_x-1, colorFront);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint-1, C.m_x+1, D.m_x-1, colorFront);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps-1, C.m_x+1, x4-1, colorFront);
       }
 
       // Draw left face
       if( visibilityMask & LEFT_FACE ) {
-        shape_drawer.drawHorizontalLine(y4, A.m_x, x3, colorLeft);
-        shape_drawer.drawHorizontalLine(C.m_y + linePoint, A.m_x, C.m_x, colorLeft);
-        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps, x3, C.m_x, colorLeft);
+        shape_drawer.drawHorizontalLine(y4+1, A.m_x+1, x3-1, colorLeft);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint-1, A.m_x+1, C.m_x-1, colorLeft);
+        shape_drawer.drawHorizontalLine(C.m_y + linePoint + steps-1, x3+1, C.m_x-1, colorLeft);
       }
 
       x1 -= xVariation; y1 += yVariation;
@@ -165,6 +167,30 @@ public:
     
     drawFace(topA, topB, topC, topD, frontColor, leftColor, topColor, visibilityMask);
   }
+
+  Vec2i mouseCoordsToNormMap( double x, double y ) { 
+    double normX = (screenSpace.halfWidthRatio * (x - screenSpace.halfWidth) / screenSpace.aspectRatio) - cameraScroll.m_x;
+    double normY = (-screenSpace.halfHeightRatio * (y - screenSpace.halfHeight)) - cameraScroll.m_y;
+    
+    double h = normX * normX + normY * normY;
+    
+    double realX = isometricSpace.xAxis.m_x * normX + isometricSpace.xAxis.m_y * normY;
+    double realY = isometricSpace.yAxis.m_x * normX + isometricSpace.yAxis.m_y * normY;
+
+    double _x = sqrt( h - realY*realY );
+    double _y = sqrt( h - realX*realX );
+
+    double deltaX = _y * cos(isometricYAxisInclination - isometricXAxisInclination + 5.0 * RADIAN);
+    double deltaY = _x * cos(isometricYAxisInclination - isometricXAxisInclination + 5.0 * RADIAN);
+    
+    realX = floor((realX - deltaX) * xCells);
+    realY = floor((realY - deltaY) * yCells);
+
+    //std::cout << "Mouse XY: " << realX << ", " << realY << "\n";
+
+    return Vec2i( realX, realY );
+  }
+
 private:
   CoordinateSpace isometricSpace;
   ScreenSpace screenSpace;
