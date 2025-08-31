@@ -11,6 +11,9 @@
 /** for Graphics class */
 #include "../core/graphics.hpp"
 
+/** for Texture */
+#include "./Texture.hpp"
+
 #define CAN_DRAW(extra_condition)                                              \
   if (graphics == nullptr extra_condition)                                     \
     return;
@@ -76,6 +79,37 @@ public:
 
     for (; x1 <= x2; ++x1) {
       graphics->putPixel(x1, y, color);
+    }
+  }
+
+  void drawHorizontalLineUV(int y, int x1, int x2, double u1, double v1, double u2, double v2, Texture* tx ) {
+    // if y is out of vertical bounds then don't draw nothing
+    CAN_DRAW(|| y < 0 || y > graphics->height);
+
+    // swap x1 and x2 if x1 is greater than x2
+    if (x1 > x2) {
+      x1 ^= x2;
+      x2 ^= x1;
+      x1 ^= x2;
+
+      //double tempU = u1; u1 = u2; u2 = tempU; 
+      //double tempV = v1; v1 = v2; v2 = tempV; 
+
+    }
+    
+    double dx = x2 - x1;
+    double lerp = 1 / (dx != 0.0 ? dx : 1.0);
+
+    double alpha = 1.0;
+    double beta = 0.0;
+
+    for (; x1 <= x2; ++x1) {
+      double u = alpha * u1 + beta * u2;
+      double v = alpha * v1 + beta * v2;
+      uint32_t txColor = tx->getTexelColor(u,v);
+      if( txColor != 0xFFFF00FF ) graphics->putPixel(x1, y, txColor);
+      alpha += lerp;
+      beta -= lerp;
     }
   }
 

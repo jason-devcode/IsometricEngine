@@ -8,9 +8,14 @@
 #include "../include/pipelines/isometric_pipeline.hpp"
 
 #include <cstdint>
-#include <sys/types.h>
+
+#include "../include/utils/Texture.hpp"
+
+#include "../include/utils/PPMImage.hpp"
 
 using std::uint32_t;
+
+#define MAX_TEXTURES 5
 
 class IsometricGame : public CGame {
 public:
@@ -31,7 +36,16 @@ public:
   }
   
   Vec2f *cameraScroll = nullptr;
+  Texture *textures[ MAX_TEXTURES ]{nullptr};
+  std::string texturePaths[ MAX_TEXTURES ] = {
+    "../assets/cityTiles_066.ppm",
+    "../assets/cityTiles_056.ppm",
+    "../assets/cityTiles_105.ppm",
+    "../assets/cityTiles_081.ppm",
+    "../assets/cityTiles_057.ppm"
+  };
 
+  int selectorRange = 0;
 
   IsometricGame &onInitialize() {
     isometric_drawer
@@ -41,22 +55,28 @@ public:
     auto& keyboard = engine.input.keyboard;
     
     cameraScroll = isometric_drawer.getCameraScroll();
-    cameraScroll->m_y -= 1;
+    cameraScroll->m_y -= 4;
 
-    constexpr double cameraStep = 0.003;
+    constexpr double cameraStep = 0.008;
 
     keyboard.addKeyPressed( 'a', [&](EventData event) { cameraScroll->m_x += cameraStep; } );
     keyboard.addKeyPressed( 'd', [&](EventData event) { cameraScroll->m_x -= cameraStep; } );
     keyboard.addKeyPressed( 'w', [&](EventData event) { cameraScroll->m_y -= cameraStep; } );
     keyboard.addKeyPressed( 's', [&](EventData event) { cameraScroll->m_y += cameraStep; } );
-
-    engine.input.keyboard.triggerListeners( 'a', KeyEventType::PRESSED );
+    
+    for( int i = 0; i < 9; ++i )
+      keyboard.addKeyPressed( '1' + i, [&, i](EventData event) { selectorRange = i; } );
+    
+    for( int textureIterator = 0; textureIterator < MAX_TEXTURES; ++textureIterator ) {
+      textures[ textureIterator ] = PPMImage::readFile(texturePaths[ textureIterator ]);
+    }
+    
     return *this;
   }
   
   
   IsometricGame &loop() {
-    int HEIGHT = 4;
+    int HEIGHT = 1;
     int SIDE = 10;
 
     int mapa[HEIGHT][SIDE*SIDE] = {
@@ -66,61 +86,27 @@ public:
         1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,2,2,1,1,1,
+        1,1,1,1,1,2,2,1,1,1,
+        4,4,4,4,5,4,4,4,4,4,
         1,1,1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1,1,1,
-      },
-      {
-        1,1,1,0,0,0,0,1,1,1,
-        1,1,0,0,0,0,0,0,1,1,
-        1,0,0,0,0,0,0,0,0,1,
-        0,0,0,0,1,0,0,0,0,0,
-        0,0,0,1,1,1,0,0,0,0,
-        0,0,1,1,1,1,1,0,0,0,
-        0,0,0,1,1,1,0,0,0,0,
-        1,0,0,0,1,0,0,0,0,1,
-        1,1,0,0,0,0,0,0,1,1,
-        1,1,1,0,0,0,0,1,1,1,
-      },
-      {
-        1,1,0,0,0,0,0,0,1,1,
-        1,0,0,0,0,0,0,0,0,1,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,0,0,0,1,
-        1,1,0,0,0,0,0,0,1,1,
-      },
-      {
-        1,0,0,0,0,0,0,0,0,1,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,0,0,0,1,
-      },
+        3,3,3,3,3,3,3,3,3,3,
+      } 
     };
-
-    int gridLenght = 50;
+    
+    
+    
+    int gridLenght = 100;
 
     for( int axis = 0; axis <= gridLenght; ++axis ) {
-      isometric_drawer.drawNormalizedLine(axis, 0, axis, gridLenght, 0xFF00B000);
-      isometric_drawer.drawNormalizedLine(0, axis, gridLenght, axis, 0xFFFF0000);
+      isometric_drawer.drawNormalizedLine(axis, 0, axis, gridLenght, 0xFF005000);
+      isometric_drawer.drawNormalizedLine(0, axis, gridLenght, axis, 0xFF500000);
     }
 
     int offsetMapX = 15;
     int offsetMapY = 15;
     
-    for(int Z = 0; Z < HEIGHT; ++Z ) {
+    for(int Z = 0; Z < 1; ++Z ) {
       for( int Y = SIDE - 1; Y > -1; --Y ) {
         for( int X = SIDE - 1; X > -1; --X ) {
           int indexCell = Y * SIDE + X;
@@ -137,21 +123,21 @@ public:
               if(isBlack) color = 0xFF000000;
           }
 
-          if(cell) {
-              isometric_drawer.drawFillCube( X + offsetMapX, Y + offsetMapY, Z, 0xFF505050, 0xFF909090, color + 0x00101010 * Z, frontFaceIsVisible | leftFaceIsVisible | topFaceIsVisible);
+          if(cell > 0) {
+              isometric_drawer.drawTexturedCube( X + offsetMapX, Y + offsetMapY, Z, textures[ cell - 1 ], frontFaceIsVisible | leftFaceIsVisible | topFaceIsVisible);
           }
         }
       }
     }
-    
     Vec2i pointer = isometric_drawer.mouseCoordsToNormMap( engine.input.mouse.cursorX, engine.input.mouse.cursorY );
-    
+
+
     if(pointer.m_x >= 0 && pointer.m_y >= 0) {
-      for( int Y = -1; Y <= 1; ++Y ) {
-        for( int X = -1; X <= 1; ++X ) {
+      for( int Y = -selectorRange; Y <= selectorRange; ++Y ) {
+        for( int X = -selectorRange; X <= selectorRange; ++X ) {
           int cellX = pointer.m_x + X;
           int cellY = pointer.m_y + Y;
-          if( cellX > -1 && cellY > -1 ) {
+          if( cellX > -1 && cellY > -1 && cellX < gridLenght && cellY < gridLenght ) {
             isometric_drawer.drawFillCube(cellX, cellY, 0, 0, 0, 0xFFFFFF00, TOP_FACE);
           }
         }
@@ -161,12 +147,16 @@ public:
     return *this;
   }
 
-  IsometricGame &onRelease() { return *this; }
+  IsometricGame &onRelease() { 
+    std::cout << "IsometricGame::onRelease()\n";
+    for( auto* texture : textures ) delete texture;
+    return *this; 
+  }
 
 private:
   IsometricDrawerPipeline isometric_drawer;
-  int width = 1920;
-  int height = 1080;
+  int width = 1280;
+  int height = 720;
 };
 
 /**

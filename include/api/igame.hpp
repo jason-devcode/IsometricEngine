@@ -7,6 +7,7 @@ class IGame {
     ~IGame(){}
     
     virtual IGame& loop() = 0;
+    virtual IGame& onRelease() = 0;
 };
 
 #endif

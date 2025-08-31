@@ -83,8 +83,10 @@ class EngineProps {
 class EngineInstance {
   public:
     EngineInstance() {
-//      props = EngineProps();
-//      window = EngineWindow();
+      std::cout << "EngineInstance::EngineInstance()\n";
+    }
+    ~EngineInstance() {
+      std::cout << "EngineInstance::~EngineInstance()\n";
     }
     
     // stage 1 - create engine instance resources
@@ -159,7 +161,10 @@ class EngineInstance {
 
         window.render();
       }
-      return *this;
+      if( props.m_currentGame )
+        props.m_currentGame->onRelease();
+
+     return *this;
    }
 
     EngineWindow window;
