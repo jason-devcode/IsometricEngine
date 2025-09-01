@@ -48,11 +48,11 @@ public:
   inline uint32_t setHeight() const noexcept { return height; }
 
   inline double normXtoScreen(double xCoordNorm) const {
-    return halfWidth * (xCoordNorm * aspectRatio + 1);
+    return floor(halfWidth * (xCoordNorm * aspectRatio + 1) + 0.5);
   }
 
   inline double normYtoScreen(double yCoordNorm) const {
-    return halfHeight * (-yCoordNorm + 1);
+    return floor(halfHeight * (-yCoordNorm + 1) + 0.5);
   }
 
   inline Vec2i normVec2fToScreen( Vec2f point ) const {

@@ -211,7 +211,7 @@ public:
     double vVariation = 1.0 / static_cast<double>(cubeHeight);
 
     for( int Y = topC.m_y; Y > (topC.m_y - cubeHeight); --Y ) {
-      shape_drawer.drawHorizontalLineUV( Y, topA.m_x, topD.m_x, 0.0, 1.0-v, 1, 1.0-v, texture );
+      shape_drawer.drawHorizontalLineUV( Y, ceil(topA.m_x), topD.m_x+1, 0.0, 1.0-v, 1, 1.0-v, texture );
       v += vVariation;
     }
   }

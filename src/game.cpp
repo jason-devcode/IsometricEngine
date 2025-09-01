@@ -13,6 +13,8 @@
 
 #include "../include/utils/PPMImage.hpp"
 
+#include "../include/utils/Text.hpp"
+
 using std::uint32_t;
 
 #define MAX_TEXTURES 5
@@ -55,7 +57,7 @@ public:
     auto& keyboard = engine.input.keyboard;
     
     cameraScroll = isometric_drawer.getCameraScroll();
-    cameraScroll->m_y -= 4;
+    cameraScroll->m_y -= 3;
 
     constexpr double cameraStep = 0.008;
 
@@ -71,6 +73,8 @@ public:
       textures[ textureIterator ] = PPMImage::readFile(texturePaths[ textureIterator ]);
     }
     
+    tout.setOffsets(25, 25).setEnableBg(true);
+    tout << std::fixed << std::setprecision(2);
     return *this;
   }
   
@@ -144,6 +148,13 @@ public:
       }
     }
     
+    tout << "Camera X: " << cameraScroll->m_x << "\n";
+    tout << "Camera Y: " << cameraScroll->m_y << "\n";
+    tout << "Cursor Cell X: " << pointer.m_x << "\n";
+    tout << "Cursor Cell Y: " << pointer.m_y << "\n";
+    
+    tout.render();
+
     return *this;
   }
 
