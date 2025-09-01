@@ -24,6 +24,9 @@
 /** for graphics */
 #include "./graphics.hpp"
 
+/** for TextDrawer */
+#include "../utils/Text.hpp"
+
 /** for input system */
 #include "./input_system.hpp"
 #include "keyboard_manager.hpp"
@@ -121,6 +124,7 @@ class EngineInstance {
         const auto graphHeight = props.m_screenHeight_px; 
         graphics.setWidth(graphWidth > 0 ? graphWidth : 1);
         graphics.setHeight(graphHeight > 0 ? graphHeight : 1);
+        tout.setGraphics(&graphics);
       }
       return *this;
     }
