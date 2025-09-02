@@ -59,12 +59,13 @@ public:
     cameraScroll = isometric_drawer.getCameraScroll();
     cameraScroll->m_y -= 3;
 
-    constexpr double cameraStep = 0.008;
+    constexpr double cameraStep = 3;
+    double& deltatime = *engine_timer.getDeltatimeRef();
 
-    keyboard.addKeyPressed( 'a', [&](EventData event) { cameraScroll->m_x += cameraStep; } );
-    keyboard.addKeyPressed( 'd', [&](EventData event) { cameraScroll->m_x -= cameraStep; } );
-    keyboard.addKeyPressed( 'w', [&](EventData event) { cameraScroll->m_y -= cameraStep; } );
-    keyboard.addKeyPressed( 's', [&](EventData event) { cameraScroll->m_y += cameraStep; } );
+    keyboard.addKeyPressed( 'a', [&](EventData event) { cameraScroll->m_x += cameraStep * deltatime; } );
+    keyboard.addKeyPressed( 'd', [&](EventData event) { cameraScroll->m_x -= cameraStep * deltatime; } );
+    keyboard.addKeyPressed( 'w', [&](EventData event) { cameraScroll->m_y -= cameraStep * deltatime; } );
+    keyboard.addKeyPressed( 's', [&](EventData event) { cameraScroll->m_y += cameraStep * deltatime; } );
     
     for( int i = 0; i < 9; ++i )
       keyboard.addKeyPressed( '1' + i, [&, i](EventData event) { selectorRange = i; } );

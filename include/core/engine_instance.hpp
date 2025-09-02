@@ -31,7 +31,12 @@
 #include "./input_system.hpp"
 #include "keyboard_manager.hpp"
 
+/** for engine_timer */
+#include "./timers.hpp"
+
 using std::uint32_t;
+
+double deltatime = 0.0;
 
 class EngineProps {
   public:
@@ -158,12 +163,14 @@ class EngineInstance {
         // Update mouse state
         SDL_GetMouseState(&input.mouse.cursorX, &input.mouse.cursorY);
         
+        engine_timer.startFrame();
         window.clear();
 
         if( props.m_currentGame )
           props.m_currentGame->loop();
 
         window.render();
+        engine_timer.calculateDeltatime();
       }
       if( props.m_currentGame )
         props.m_currentGame->onRelease();
