@@ -15,6 +15,9 @@
 /** for SDL Event utils */
 #include <SDL2/SDL.h>
 
+/** for EngineProps */
+#include "./engine_props.hpp"
+
 /** for EngineWindow */
 #include "./engine_window.hpp"
 
@@ -29,7 +32,7 @@
 
 /** for input system */
 #include "./input_system.hpp"
-#include "keyboard_manager.hpp"
+#include "./keyboard_manager.hpp"
 
 /** for engine_timer */
 #include "./timers.hpp"
@@ -37,56 +40,6 @@
 using std::uint32_t;
 
 double deltatime = 0.0;
-
-class EngineProps {
-  public:
-    EngineProps() {}
-    EngineProps& setTitle( std::string title ) {
-      m_title = title;
-      return *this;
-    }
-    
-    EngineProps& setScreenWidth( uint32_t width_px ) {
-      m_screenWidth_px = width_px;
-      return *this;
-    }
-
-    EngineProps& setScreenHeight( uint32_t height_px ) {
-      m_screenHeight_px = height_px;
-      return *this;
-    }
-
-    EngineProps& setScreenColor( uint32_t colorRGB888 ) {
-      m_screenColor = colorRGB888;
-      return *this;
-    }
-
-    EngineProps& setVSyncEnable( bool enable ) {
-      m_vsyncEnable = enable;
-      return *this;
-    }
-
-    EngineProps& setVSyncLimit( uint32_t limit ) {
-      m_vsyncLimit = limit;
-      return *this;
-    }
-
-    EngineProps& setCurrentGame( IGame* game ) {
-      m_currentGame = game;
-      return *this;
-    }
-
-    std::string m_title = "Default App";
-    
-    uint32_t m_screenWidth_px = 256;
-    uint32_t m_screenHeight_px = 256;
-    uint32_t m_screenColor = 0xFF000000;
-
-    uint32_t m_vsyncLimit = 30;
-    bool m_vsyncEnable = true;
-    
-    IGame* m_currentGame = nullptr;
-};
 
 class EngineInstance {
   public:

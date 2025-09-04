@@ -28,15 +28,16 @@ class CGame : public IGame {
     // 1. stage to build game engine instance
     virtual CGame& buildEngineInstance() { 
       std::cout << "CGame::buildEngineInstance()\n";
-      //engine = EngineInstance();
-      engine.props 
-        .setTitle("default")
-        .setScreenWidth(256)
-        .setScreenHeight(256)
-        .setScreenColor(0xFF000000)
-        .setVSyncEnable(true)
-        .setVSyncLimit(60);
-            return *this; 
+      engine.props.setInstanceProps(
+        "default",
+        256,
+        256,
+        0xFF000000,
+        true,
+        60,
+        this
+      );
+      return *this; 
     }
 
     virtual CGame& onCreateWindow() {
